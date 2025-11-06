@@ -2,4 +2,11 @@ import app from "./app.js";
 
 
 const PORT = process.env.PORT;
-app.listen(PORT, () => console.log('Servidor rodando...'));
+
+app.listen({ port: Number(PORT) }, (err, address ) => {
+    if (err) {
+        app.log.error(err);
+        process.exit(1);
+    }
+    console.log(`Servidor rodando nas porta ${address}`);
+});

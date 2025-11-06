@@ -1,14 +1,14 @@
 import { ZodType } from 'zod';
-import type { Request, Response, NextFunction } from 'express';
+import type { FastifyRequest, FastifyReply } from 'fastify';
 
-const validateSchema = (schema: ZodType) => (req: Request, res: Response, next: NextFunction) => {
+const validateSchema = (schema: ZodType) => (req: FastifyRequest, res: FastifyReply) => {
     const result = schema.safeParse(req.body);
+    
     if (!result.success) {
-        return res.status(400).json({ error: result.error });
+        return res.status(400).send({ error: result.error });
     }
     
     req.body = result.data;
-    next();
 }
 
 export default validateSchema
