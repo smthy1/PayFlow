@@ -30,10 +30,14 @@ jobs:
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> $GITHUB_ENV
 
       - name: Generate Prisma client
-        run: cd src/modules/prisma npx prisma generate
+        run: |
+            cd src/modules/prisma 
+            npx prisma generate
 
       - name: Push schema to db
-        run: npx prisma db push
+        run: |
+            cd src/modules/prisma    
+            npx prisma db push
 
       - name: Run tests
         run: npm test
