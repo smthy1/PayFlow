@@ -40,6 +40,8 @@ async function loginUser(userData: LoginUserInput) {
         const comparePassword = await bcrypt.compare(password, userPassword);
         if (!comparePassword) return { error: "Credenciais inválidas" };
 
+        return { message: "Credenciais válidas", user: { id: findUserByEmail.id, name: findUserByEmail.name } };
+
     } catch (err) {
         return { unexpectedError: err };
     }

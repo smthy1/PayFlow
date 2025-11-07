@@ -1,11 +1,12 @@
 import type { FastifyInstance } from "fastify";
-import authToken from "../../middlewares/authMiddleware.js";
 import { registerController } from "./auth.controllers.js";
-import type { RegisterUserInput } from "./auth.schemas.js";
+import { loginController } from "./auth.controllers.js";
+import { loginUserSchema, registerUserSchema } from "./auth.schemas.js";
 
 const authRoutes = async (app: FastifyInstance) => {
-    app.post<{ Body: RegisterUserInput }>('/users', registerController)
+    app.post('/register', { schema: registerUserSchema }, registerController),
+    app.post('/login', { schema: loginUserSchema },loginController)
 };
 
 
-export default authRoutes
+export default authRoutes;

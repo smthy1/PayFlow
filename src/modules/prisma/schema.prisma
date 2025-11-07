@@ -13,7 +13,7 @@ model User {
   name      String
   email     String   @unique
   password  String
-  balance   Float    @default(0)
+  balance   BigInt    @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -25,7 +25,7 @@ model User {
 
 model Transaction {
   id         String  @id @default(uuid())
-  amount     Float
+  amount     BigInt
   type       TransactionType
   fromUserId String?
   toUserId   String?
