@@ -9,10 +9,30 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testdb
+        
+        ports:
+          - 5432:5432
+        
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    
     strategy:
       matrix:
         node-version: [22.x]
-    
+
     steps:
       - uses: actions/checkout@v4
 
@@ -21,28 +41,24 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      
+
       - run: npm ci
 
       - name: Set environment variables
         run: |
-          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
+          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/testdb" >> $GITHUB_ENV
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> $GITHUB_ENV
 
       - name: Generate Prisma client
-        run: |
-            cd src/modules/prisma 
-            npx prisma generate
+        run: npx prisma generate --schema=src/modules/prisma/schema.prisma
 
-      - name: Push schema to db
-        run: |
-            cd src/modules/prisma    
-            npx prisma db push
+      - name: Push schema to local DB
+        run: npx prisma db push --schema=src/modules/prisma/schema.prisma
 
       - name: Run tests
         run: npm test
 
-      - name: Upload test results
+      - name: Upload test results if failed
         if: failure()
         uses: actions/upload-artifact@v4
         with:
