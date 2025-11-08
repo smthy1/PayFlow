@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const depositSchema = z.object({
+export const depositSchema = z.object({
     amount: z.number()
         .positive('O valor deve ser maior que zero')
         .max(999999999, 'Valor muito alto')

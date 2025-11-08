@@ -4,7 +4,8 @@ import jwt from 'jsonwebtoken'
 import 'dotenv/config'
 
 
-const authToken = async (req: AuthRequest, res: FastifyReply) => {
+export const authToken = async (req: AuthRequest, res: FastifyReply) => {
+    console.log("Entrando no middleware");
     const authHeader = req.headers.authorization;
 
     if(!authHeader) return res.status(401).send({ error: "Token não fornecido" });
@@ -19,8 +20,11 @@ const authToken = async (req: AuthRequest, res: FastifyReply) => {
 
         req.user = decoded;
     } catch (err) {
+        console.error("Erro ao verificar token: ", err);
         return res.status(401).send({ error: err });
     }
+
+    console.log("Middleware terminou")
+
 };
 
-export default authToken;

@@ -1,7 +1,8 @@
 import request from 'supertest';
 import app from "../app.js";
-import { describe, it, beforeAll, afterAll, expect } from '@jest/globals';
+import { describe, it, beforeAll, afterAll, expect, jest } from '@jest/globals';
 import prisma from '../modules/prisma/prisma.services.js';
+
 
 let token: string;
 
@@ -32,6 +33,7 @@ describe('POST /health', ()=> {
 });
 
 afterAll(async ()=> {
+    await prisma.user.deleteMany({ where: { email: "test@test.com" } });
+    await prisma.$disconnect();
     await app.close();
-    await prisma.user.deleteMany({ where: {email: "test@test.com"} })
 });

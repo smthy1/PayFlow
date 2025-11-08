@@ -1,10 +1,20 @@
 import type { FastifyInstance } from "fastify";
 import * as AuthControllers from './auth.controllers.js';
-import { loginUserSchema, registerUserSchema } from "./auth.schemas.js";
+import { loginUserSchema, registerUserSchema, type RegisterUserInput, type LoginUserInput } from "./auth.schemas.js";
+import { validateSchema } from "../../middlewares/validateSchema.js";
 
 const authRoutes = async (app: FastifyInstance) => {
-    app.post('/register', { schema: registerUserSchema }, AuthControllers.register),
-    app.post('/login', { schema: loginUserSchema },AuthControllers.login)
+    app.post<{ Body: RegisterUserInput }>(
+        '/register', 
+        { preHandler: validateSchema(registerUserSchema) }, 
+        AuthControllers.register
+    );
+    
+    app.post<{ Body: LoginUserInput }>(
+        '/login', 
+        { preHandler: validateSchema(loginUserSchema) }, 
+        AuthControllers.login
+    );
 };
 
 

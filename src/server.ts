@@ -8,5 +8,5 @@ app.listen({ port: Number(PORT) }, (err, address ) => {
         app.log.error(err);
         process.exit(1);
     }
-    console.log(`Servidor rodando nas porta ${address}`);
+    console.log(`Servidor rodando na porta ${address}`);
 });
