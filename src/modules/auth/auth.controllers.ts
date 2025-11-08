@@ -1,10 +1,10 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { z } from 'zod'
-import * as AuthServices from './auth.services.js';
+import * as AuthService from "./auth.services.js";
 import { registerUserSchema, loginUserSchema, type RegisterUserInput, type LoginUserInput } from "./auth.schemas.js";
 import jwt from 'jsonwebtoken'
 
-const registerController = async (req: FastifyRequest<{ Body: RegisterUserInput }>, reply: FastifyReply) => {
+const register = async (req: FastifyRequest<{ Body: RegisterUserInput }>, reply: FastifyReply) => {
     try {
         const parsed = registerUserSchema.safeParse(req.body);
         if(!parsed.success) {
@@ -14,7 +14,7 @@ const registerController = async (req: FastifyRequest<{ Body: RegisterUserInput 
 
 
         const { name, email, password }: RegisterUserInput = parsed.data;
-        const registerUserResult = await AuthServices.registerUser({ name: name, email: email, password: password });
+        const registerUserResult = await AuthService.registerUser({ name: name, email: email, password: password });
 
         if(registerUserResult.error || registerUserResult.unexpectedError) return reply.status(400).send(registerUserResult);
 
@@ -32,7 +32,7 @@ const registerController = async (req: FastifyRequest<{ Body: RegisterUserInput 
     }
 }
 
-const loginController = async(req: FastifyRequest<{ Body: LoginUserInput }>, reply: FastifyReply) => {
+const login = async(req: FastifyRequest<{ Body: LoginUserInput }>, reply: FastifyReply) => {
     try {
         const parsed = loginUserSchema.safeParse(req.body);
 
@@ -42,7 +42,7 @@ const loginController = async(req: FastifyRequest<{ Body: LoginUserInput }>, rep
         }
 
         const { email, password } = parsed.data;
-        const loginUserResult = await AuthServices.loginUser({ email: email, password: password });
+        const loginUserResult = await AuthService.loginUser({ email: email, password: password });
         
         if(loginUserResult.error || loginUserResult.unexpectedError) return reply.status(400).send(loginUserResult);
         const user = loginUserResult.user;
@@ -59,4 +59,4 @@ const loginController = async(req: FastifyRequest<{ Body: LoginUserInput }>, rep
     }
 };
 
-export { registerController, loginController }
+export { register, login }

@@ -1,4 +1,4 @@
-import { email, z } from 'zod';
+import { z } from 'zod';
 
 export const registerUserSchema = z.object({
     name: z.string()
@@ -9,8 +9,8 @@ export const registerUserSchema = z.object({
 });
 
 export const loginUserSchema = z.object({
-    email: z.email({ error: 'Formato de email inválido' }).nonempty({error: 'Campo de email obrigatório'}),
-    password: z.string().nonempty({error: 'Campo de senha obrigatório'})
+    email: z.email({ error: 'Formato de email inválido' }).nonempty({ error: 'Campo de email obrigatório' }),
+    password: z.string().nonempty({ error: 'Campo de senha obrigatório' })
 });
 
 export type RegisterUserInput = z.infer<typeof registerUserSchema>;
