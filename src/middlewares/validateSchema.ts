@@ -9,7 +9,6 @@ export const validateSchema = (schema: z.ZodObject<any>) => {
             const errors = z.treeifyError(result.error);
             return res.status(400).send({ error:"Dados inválidos", details: errors});
         }
-        console.log("Validação OK")
         req.body = result.data;
     };
 };
