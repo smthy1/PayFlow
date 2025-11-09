@@ -1,5 +1,4 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
-import { z } from 'zod';
 import * as AuthService from "./auth.services.js";
 import type { RegisterUserInput, LoginUserInput } from "./auth.schemas.js";
 import jwt from 'jsonwebtoken';

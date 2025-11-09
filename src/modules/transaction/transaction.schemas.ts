@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { id } from 'zod/locales';
 
 export const depositSchema = z.object({
     amount: z.number()
@@ -9,7 +10,9 @@ export const depositSchema = z.object({
 });
 
 
-
+export const depositResponseSchema = z.object({
+    message: z.string()
+});
 
 
 export type DepositInput = z.infer<typeof depositSchema>;

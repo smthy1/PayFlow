@@ -4,15 +4,15 @@ import fastifySwaggerUi from "@fastify/swagger-ui";
 import authRoutes from "./modules/auth/auth.routes.js";
 import healthRoutes from "./modules/health/health.routes.js";
 import transactionRoutes from "./modules/transaction/transaction.routes.js";
-import { authToken } from "./middlewares/authMiddleware.js";
+import { jsonSchemaTransform, serializerCompiler, validatorCompiler, type ZodTypeProvider } from "fastify-type-provider-zod";
+import fastifyCors from "@fastify/cors";
 
-const app = fastify();
+const app = fastify().withTypeProvider<ZodTypeProvider>();
 
-app.register(authRoutes, { prefix: '/auth' });
+app.setValidatorCompiler(validatorCompiler);
+app.setSerializerCompiler(serializerCompiler);
 
-
-app.register(transactionRoutes, { prefix: '/' });
-app.register(healthRoutes, { prefix: '/health' });
+app.register(fastifyCors, { origin: '*' });
 
 
 app.register(fastifySwagger, {
@@ -20,13 +20,23 @@ app.register(fastifySwagger, {
         info: {
             title: "PayFlow",
             version: "1.0.0",
+            description: "API de pagamentos"
+        },
+        components: { 
+            securitySchemes: { bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' } }
         }
-    }
+    },
+    transform: jsonSchemaTransform,
 });
 
 app.register(fastifySwaggerUi, {
     routePrefix: "/docs",
 });
+
+
+app.register(authRoutes, { prefix: '/auth' });
+app.register(transactionRoutes, { prefix: '/' });
+app.register(healthRoutes, { prefix: '/health' });
 
 
 

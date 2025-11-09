@@ -13,5 +13,11 @@ export const loginUserSchema = z.object({
     password: z.string().nonempty({ error: 'Campo de senha obrigatório' })
 });
 
+export const authResponseSchema = z.object({
+    message: z.string(),
+    token: z.string()
+});
+
+
 export type RegisterUserInput = z.infer<typeof registerUserSchema>;
 export type LoginUserInput = z.infer<typeof loginUserSchema>;
