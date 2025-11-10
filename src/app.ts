@@ -6,6 +6,7 @@ import healthRoutes from "./modules/health/health.routes.js";
 import transactionRoutes from "./modules/transaction/transaction.routes.js";
 import { jsonSchemaTransform, serializerCompiler, validatorCompiler, type ZodTypeProvider } from "fastify-type-provider-zod";
 import fastifyCors from "@fastify/cors";
+import userRoutes from "./modules/user/user.routes.js";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -37,7 +38,7 @@ app.register(fastifySwaggerUi, {
 app.register(authRoutes, { prefix: '/auth' });
 app.register(transactionRoutes, { prefix: '/' });
 app.register(healthRoutes, { prefix: '/health' });
-
+app.register(userRoutes, { prefix:'/user' });
 
 
 export default app;

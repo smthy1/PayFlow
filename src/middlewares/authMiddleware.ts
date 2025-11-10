@@ -1,10 +1,10 @@
-import type { FastifyReply } from 'fastify';
-import type { AuthRequest, JWTPayload } from '../modules/auth/auth.types.js';
+import type { FastifyReply, FastifyRequest } from 'fastify';
+import type { JWTPayload } from '../modules/shared/JWTPayloadInterface.js';
 import jwt from 'jsonwebtoken'
 import 'dotenv/config'
 
 
-export const authToken = async (req: AuthRequest, res: FastifyReply) => {
+export const authToken = async (req: FastifyRequest, res: FastifyReply) => {
     const authHeader = req.headers.authorization;
 
     if(!authHeader) return res.status(401).send({ error: "Token não fornecido" });

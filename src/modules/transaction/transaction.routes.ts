@@ -4,11 +4,12 @@ import { depositSchema, depositResponseSchema, type DepositInput } from './trans
 import { authToken } from '../../middlewares/authMiddleware.js';
 import  { validateSchema } from '../../middlewares/validateSchema.js';
 
+
 const transactionRoutes = async (app: FastifyTypedInstance) => {
-  app.post<{Body: DepositInput }>(
+  app.post<{ Body: DepositInput }>(
     '/deposit',
     {
-      preHandler: [ authToken, validateSchema(depositSchema)],
+      preHandler: [authToken, validateSchema(depositSchema)],
       schema: {
         description: 'Deposit',
         tags: ['transactions'],

@@ -1,13 +1,14 @@
-import type { FastifyRequest, FastifyReply } from "fastify";
+import type { FastifyReply, FastifyRequest } from "fastify";
 import * as TransactionServices from './transaction.services.js';
 import type { DepositInput } from "./transaction.schemas.js";
 
 
 const deposit = async (req: FastifyRequest<{ Body: DepositInput }>, reply: FastifyReply) => {
     try {
-        const { amount, toUserId } = req.body;
+        const amount = req.body;
+        const userId = req.user!.id;
         
-        const depositResult = await TransactionServices.depositService({ amount: amount, toUserId: toUserId });
+        const depositResult = await TransactionServices.deposit({ amount: amount.amount },  userId );
         
         if(!depositResult.message) return reply.status(400).send({ error: depositResult });
 
