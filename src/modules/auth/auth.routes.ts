@@ -1,4 +1,4 @@
-import type { FastifyTypedInstance } from '../shared/FastifyTypedInstance.js';
+import type { FastifyTypedInstance } from '../transaction/shared/FastifyTypedInstance.js';
 import * as AuthControllers from './auth.controllers.js';
 import { loginUserSchema, registerUserSchema, authResponseSchema, type RegisterUserInput, type LoginUserInput } from "./auth.schemas.js";
 import { validateSchema } from "../../middlewares/validateSchema.js";

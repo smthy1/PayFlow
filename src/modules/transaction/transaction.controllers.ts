@@ -12,7 +12,9 @@ const deposit = async (req: FastifyRequest<{ Body: DepositInput }>, reply: Fasti
         
         if(!depositResult.message) return reply.status(400).send({ error: depositResult });
 
-        return reply.status(200).send({ message: "Depósito realizado" });
+        console.log(depositResult);
+
+        return reply.status(200).send(depositResult);
     } catch (err) {
         return reply.status(500).send({ error: err });
     }
@@ -29,7 +31,7 @@ const withdraw = async (req: FastifyRequest<{ Body: WithdrawalDataToController }
         
         if (!withdrawal.message) return reply.status(400).send(withdrawal);
 
-        return reply.status(200).send({ message: "Saque realizado" });
+        return reply.status(200).send(withdrawal);
     } catch (err) {
         return reply.status(500).send({ error: "Erro do servidor: ", err });
     }

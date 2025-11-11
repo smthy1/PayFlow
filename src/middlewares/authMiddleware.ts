@@ -1,5 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import type { JWTPayload } from '../modules/shared/JWTPayloadInterface.js';
+import type { JWTPayload } from '../modules/transaction/shared/JWTPayloadInterface.js';
 import jwt from 'jsonwebtoken'
 import 'dotenv/config'
 

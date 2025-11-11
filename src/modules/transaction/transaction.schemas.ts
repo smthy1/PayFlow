@@ -9,9 +9,30 @@ export const depositSchema = z.object({
 
 
 export const depositResponseSchema = z.object({
-    message: z.string()
+  message: z.string(),
+  transactionDetails: z.object({
+        type: z.string(),
+        amount: z.string(),
+        id: z.string(),
+        createdAt: z.date(),
+        fromUserId: z.string().nullable(),
+        toUserId: z.string().nullable(),
+    }),
+  newUserBalance: z.string()
 });
 
+export const withdrawalResponseSchema = z.object({
+  message: z.string(),
+  transactionDetails: z.object({
+        type: z.string(),
+        amount: z.string(),
+        id: z.string(),
+        createdAt: z.date(),
+        fromUserId: z.string().nullable(),
+        toUserId: z.string().nullable(),
+    }),
+  newUserBalance: z.string()
+});
 
 export const withdrawalDataSchema = z.object({
     withdrawalAmount: z.number(),
@@ -35,6 +56,18 @@ export const transferToControllerSchema = z.object({
     toUserEmail: z.email(),
     transferAmount: z.number()
 })
+
+export const transferResponseSchema = z.object({
+    message: z.string(),
+    transactionDetails: z.object({
+        type: z.string(),
+        amount: z.string(),
+        id: z.string(),
+        createdAt: z.date(),
+        fromUserId: z.string().nullable(),
+        toUserId: z.string().nullable(),
+    })
+});
 
 
 export type DepositInput = z.infer<typeof depositSchema>;

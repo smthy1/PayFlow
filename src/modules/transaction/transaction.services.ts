@@ -1,7 +1,6 @@
 import prisma from "../prisma/prisma.services.js";
 import type { DepositInput, TransferData, WithdrawalData } from "./transaction.schemas.js";
-import { convertToCents, convertCentsToBRL } from "../shared/conversion.js";
-import { id } from "zod/locales";
+import { convertToCents, convertCentsToBRL } from "./shared/conversion.js";
 
 
 async function deposit (userInputData: DepositInput, userId: string) {
@@ -30,7 +29,17 @@ async function deposit (userInputData: DepositInput, userId: string) {
             });
 
             const newUserBalanceConverted = convertCentsToBRL(updateUserBalance.balance)
-            return { message: "Depósito realizado", transactionDetails: createTransaction, newBalance: newUserBalanceConverted }
+
+            const transactionDetails = {
+                type: createTransaction.type,
+                amount:`R$ ${newUserBalanceConverted}`,
+                id: createTransaction.id,
+                createdAt: createTransaction.createdAt,
+                fromUserId: createTransaction.fromUserId,
+                toUserId: createTransaction.toUserId
+            };
+            
+            return { message: "Depósito realizado", transactionDetails: transactionDetails, newBalance: `R$ ${newUserBalanceConverted}` }
         });
 
         if(deposit.error) return deposit;
@@ -71,8 +80,17 @@ async function withdraw(withdrawalData: WithdrawalData) {
             });
 
             const newUserBalanceConverted = convertCentsToBRL(updateUserBalance.balance);
+            
+            const transactionDetails = {
+                type: createTransaction.type,
+                amount:`R$ ${newUserBalanceConverted}`,
+                id: createTransaction.id,
+                createdAt: createTransaction.createdAt,
+                fromUserId: createTransaction.fromUserId,
+                toUserId: createTransaction.toUserId
+            };
 
-            return { message: "Saque realizado",  transactionDetails: createTransaction, newBalance: newUserBalanceConverted  };
+            return { message: "Saque realizado",  transactionDetails: transactionDetails, newBalance: `R$ ${newUserBalanceConverted}`  };
         });
 
         if (transaction.error) return transaction;
@@ -107,26 +125,35 @@ async function transfer(transferData: TransferData) {
             }
         });
 
-        const updateBalanceFromUser = await tx.user.update({
+        await tx.user.update({
             where: {id: fromUserId},
             data: {
                 balance: { decrement: convertedTransferAmount }
             }
         });
 
-        const updateBalanceToUser = await tx.user.update({
+        await tx.user.update({
             where: {id: toUser.id },
             data: {
                 balance: { increment: convertedTransferAmount }
             }
         });
 
-        return { message: "Transferência realizada" };
+        const transactionDetails = {
+            type: transfer.type,
+            amount:`R$ ${transferAmount}`,
+            id: transfer.id,
+            createdAt: transfer.createdAt,
+            fromUserId: transfer.fromUserId,
+            toUserId: transfer.toUserId
+        };
+
+        return { message: "Transferência realizada", transactionDetails: transactionDetails };
 
     });
     if(!transaction.message) return { error: transaction.error };
     
-    return { message: transaction.message };
+    return { message: transaction.message, transactionDetails: transaction.transactionDetails };
 }
 
 

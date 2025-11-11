@@ -1,5 +1,5 @@
 import prisma from "../prisma/prisma.services.js";
-import { convertCentsToBRL } from "../shared/conversion.js";
+import { convertCentsToBRL } from "../transaction/shared/conversion.js";
 
 
 async function getUserBalance(userId: string) {
@@ -8,7 +8,7 @@ async function getUserBalance(userId: string) {
         if (!getBalance) return { error: "Usuário não encontrado" };
 
         const convertedBalance = convertCentsToBRL(getBalance.balance);
-        return { balance: convertedBalance };
+        return { balance: `R$ ${convertedBalance}` };
     } catch (err) {
         return { unexpectedError: err };
     }

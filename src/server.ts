@@ -1,9 +1,15 @@
 import app from "./app.js";
 
 const PORT = Number(process.env.PORT) || 3000;
-const HOST = "0.0.0.0";
+
 
 
 await app.ready();
 
-await app.listen({ port: PORT, host: HOST });
+await app.listen({ port: PORT, host: "0.0.0.0"  }, (err, adress) => {
+    if (err) {
+        console.error(err);
+        process.exit(1);
+    }
+    console.log("Servidor rodando...");
+});

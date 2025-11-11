@@ -1,10 +1,11 @@
-import type { FastifyTypedInstance } from '../shared/FastifyTypedInstance.js';
+import type { FastifyTypedInstance } from './shared/FastifyTypedInstance.js';
 import * as TransactionControllers from './transaction.controllers.js';
 import { depositSchema, depositResponseSchema, withdrawalDataToControllerSchema, 
   type DepositInput, type WithdrawalDataToController, 
   transferToControllerSchema,
-  type TransferData,
-  type TransferToController
+  type TransferToController,
+  withdrawalResponseSchema,
+  transferResponseSchema
 } from './transaction.schemas.js';
 import { authToken } from '../../middlewares/authMiddleware.js';
 import  { validateSchema } from '../../middlewares/validateSchema.js';
@@ -33,6 +34,7 @@ const transactionRoutes = async (app: FastifyTypedInstance) => {
         description: 'Withdraw',
         tags: ['transactions'],
         body: withdrawalDataToControllerSchema,
+        response: { 200: withdrawalResponseSchema }
 
       }
     },
@@ -47,7 +49,8 @@ const transactionRoutes = async (app: FastifyTypedInstance) => {
       schema: {
         description: 'Transfer',
         tags: ['transactions'],
-        body: transferToControllerSchema
+        body: transferToControllerSchema,
+        response: { 200: transferResponseSchema }
       }
     },
     TransactionControllers.transfer

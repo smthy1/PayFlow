@@ -5,7 +5,7 @@ export const getUserBalanceSchema = z.object({
 });
 
 export const getUserBalanceResponseSchema = z.object({
-    balance: z.number()
+    balance: z.string()
 });
 
 
