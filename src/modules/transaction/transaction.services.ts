@@ -1,6 +1,7 @@
 import prisma from "../prisma/prisma.services.js";
-import type { DepositInput } from "./transaction.schemas.js";
+import type { DepositInput, TransferData, WithdrawalData } from "./transaction.schemas.js";
 import { convertToCents, convertCentsToBRL } from "../shared/conversion.js";
+import { id } from "zod/locales";
 
 
 async function deposit (userInputData: DepositInput, userId: string) {
@@ -10,7 +11,7 @@ async function deposit (userInputData: DepositInput, userId: string) {
         
         const deposit = await prisma.$transaction(async (tx) => {
             
-            const user = await tx.user.findUnique({ where: { id: userId }, select: { id: true, balance: true } });
+            const user = await tx.user.findUnique({ where: { id: userId }, select: { balance: true } });
             if (!user) return { error: "Usuário não encontrado" };
 
             const createTransaction = await tx.transaction.create({
@@ -29,14 +30,104 @@ async function deposit (userInputData: DepositInput, userId: string) {
             });
 
             const newUserBalanceConverted = convertCentsToBRL(updateUserBalance.balance)
-            return { message: "Depósito realizado", deposit: createTransaction, user: { newBalance: newUserBalanceConverted } }
+            return { message: "Depósito realizado", transactionDetails: createTransaction, newBalance: newUserBalanceConverted }
         });
 
-        return { message: deposit.message, deposit: deposit.deposit, user: deposit.user };
+        if(deposit.error) return deposit;
+
+        return { message: deposit.message, transactionDetails: deposit.transactionDetails, newUserBalance: deposit.newBalance };
     } catch (err) {
         return { unexpectedError: err };
     } 
 }
 
 
-export { deposit };
+async function withdraw(withdrawalData: WithdrawalData) {
+    try {
+        const { withdrawalAmount , id } = withdrawalData;
+        
+        const convertedWithdrawal = convertToCents(withdrawalAmount);
+        
+        const transaction = await prisma.$transaction(async (tx) => {
+            
+            const user = await tx.user.findUnique({ where: { id: id }, select: {  balance: true } });
+            
+            if (!user) return { error: "Usuário não encontrado" };
+            if (user.balance < convertedWithdrawal) return { error: "Saldo insuficiente para realizar a transação" };
+
+            const createTransaction = await tx.transaction.create({
+                data: {
+                    amount: convertedWithdrawal,
+                    type: 'WITHDRAW',
+                    fromUserId: id
+                }
+            });
+
+            const updateUserBalance = await tx.user.update({
+                where: { id: id },
+                data: {
+                    balance: { decrement: convertedWithdrawal }
+                }
+            });
+
+            const newUserBalanceConverted = convertCentsToBRL(updateUserBalance.balance);
+
+            return { message: "Saque realizado",  transactionDetails: createTransaction, newBalance: newUserBalanceConverted  };
+        });
+
+        if (transaction.error) return transaction;
+
+        return { message: transaction.message, transactionDetails: transaction.transactionDetails, newUserBalance: transaction.newBalance };
+    } catch (err) {
+        return { unexpectedError: err };
+    }
+}
+
+
+async function transfer(transferData: TransferData) {
+    const { fromUserId, toUserEmail, transferAmount } = transferData;
+    
+    const convertedTransferAmount = convertToCents(transferAmount);
+
+    const transaction = await prisma.$transaction(async (tx) => {
+        
+        const fromUser = await tx.user.findUnique({ where: { id: fromUserId }, select: {  balance: true } });
+        const toUser = await tx.user.findUnique({ where: { email: toUserEmail }, select: {id: true, balance: true } });
+            
+        if (!fromUser || !toUser) return { error: "Usuários não encontrados" };
+    
+        if (fromUser.balance < convertedTransferAmount) return { error: "Saldo insuficiente para realizar a transação" };
+
+        const transfer = await tx.transaction.create({
+            data:  {
+                amount: convertedTransferAmount,
+                fromUserId: fromUserId,
+                toUserId: toUser.id,
+                type: 'TRANSFER'
+            }
+        });
+
+        const updateBalanceFromUser = await tx.user.update({
+            where: {id: fromUserId},
+            data: {
+                balance: { decrement: convertedTransferAmount }
+            }
+        });
+
+        const updateBalanceToUser = await tx.user.update({
+            where: {id: toUser.id },
+            data: {
+                balance: { increment: convertedTransferAmount }
+            }
+        });
+
+        return { message: "Transferência realizada" };
+
+    });
+    if(!transaction.message) return { error: transaction.error };
+    
+    return { message: transaction.message };
+}
+
+
+export { deposit, withdraw, transfer };

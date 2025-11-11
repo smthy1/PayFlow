@@ -13,4 +13,32 @@ export const depositResponseSchema = z.object({
 });
 
 
+export const withdrawalDataSchema = z.object({
+    withdrawalAmount: z.number(),
+    id: z.string()
+});
+
+
+export const withdrawalDataToControllerSchema = z.object({
+    withdrawalAmount: z.number()
+})
+
+
+
+export const transferSchema = z.object({
+    fromUserId: z.string(),
+    toUserEmail: z.email(),
+    transferAmount: z.number()
+});
+
+export const transferToControllerSchema = z.object({
+    toUserEmail: z.email(),
+    transferAmount: z.number()
+})
+
+
 export type DepositInput = z.infer<typeof depositSchema>;
+export type WithdrawalData = z.infer<typeof withdrawalDataSchema>;
+export type WithdrawalDataToController = z.infer<typeof withdrawalDataToControllerSchema>;
+export type TransferData = z.infer<typeof transferSchema>;
+export type TransferToController = z.infer<typeof transferToControllerSchema>;

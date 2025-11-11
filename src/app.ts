@@ -36,7 +36,7 @@ app.register(fastifySwaggerUi, {
 
 
 app.register(authRoutes, { prefix: '/auth' });
-app.register(transactionRoutes, { prefix: '/' });
+app.register(transactionRoutes, { prefix: '/transactions' });
 app.register(healthRoutes, { prefix: '/health' });
 app.register(userRoutes, { prefix:'/user' });
 

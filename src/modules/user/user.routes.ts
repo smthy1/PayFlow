@@ -1,7 +1,7 @@
 import * as UserControllers from './user.controllers.js'
 import type { FastifyTypedInstance } from '../shared/FastifyTypedInstance.js'
 import { validateSchema } from '../../middlewares/validateSchema.js'
-import { getUserBalanceResponseSchema, getUserBalanceSchema, type GetUserBalanceInput } from './user.schemas.js'
+import { getUserBalanceResponseSchema } from './user.schemas.js'
 import { authToken } from '../../middlewares/authMiddleware.js'
 
 
