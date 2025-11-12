@@ -1,14 +1,14 @@
 import prisma from "../prisma/prisma.services.js";
 import type { DepositInput, TransferData, WithdrawalData } from "./transaction.schemas.js";
 import { convertToCents, convertCentsToBRL } from "./shared/conversion.js";
-
+import { Prisma } from "@prisma/client";
 
 async function deposit (userInputData: DepositInput, userId: string) {
     try {
         const amount = userInputData.amount;
         const convertedAmount = convertToCents(amount);
         
-        const deposit = await prisma.$transaction(async (tx) => {
+        const deposit = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
             
             const user = await tx.user.findUnique({ where: { id: userId }, select: { balance: true } });
             if (!user) return { error: "Usuário não encontrado" };
@@ -57,7 +57,7 @@ async function withdraw(withdrawalData: WithdrawalData) {
         
         const convertedWithdrawal = convertToCents(withdrawalAmount);
         
-        const transaction = await prisma.$transaction(async (tx) => {
+        const transaction = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
             
             const user = await tx.user.findUnique({ where: { id: id }, select: {  balance: true } });
             
@@ -107,7 +107,7 @@ async function transfer(transferData: TransferData) {
     
     const convertedTransferAmount = convertToCents(transferAmount);
 
-    const transaction = await prisma.$transaction(async (tx) => {
+    const transaction = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         
         const fromUser = await tx.user.findUnique({ where: { id: fromUserId }, select: {  balance: true } });
         const toUser = await tx.user.findUnique({ where: { email: toUserEmail }, select: {id: true, balance: true } });
