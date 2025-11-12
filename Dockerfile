@@ -12,7 +12,7 @@ RUN ls -la src/modules/prisma
 
 RUN apt-get update -y && apt-get install -y openssl
 
-RUN npx prisma generate --binary=src/modules/prisma/schema.prisma --binary-target=debian-openssl-3.0.x
+RUN npx prisma generate
 
 RUN npx tsc
 
