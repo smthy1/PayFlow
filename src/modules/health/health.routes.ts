@@ -6,9 +6,9 @@ interface HealthCheck {
 }
 
 const  healthRoutes = async (app: FastifyInstance) => {
-    app.post<{ Body: HealthCheck }>('/', { preHandler: [authToken] }, async (req: FastifyRequest, reply) => {
+    app.post<{ Body: HealthCheck }>('/', { preHandler: [authToken] }, async (req: FastifyRequest<{ Body: HealthCheck }>, reply) => {
         try {
-            const content = req.body;
+            const { content } = req.body;
 
             return reply.status(200).send({ content: `Hello ${content}` });
         } catch (err) {
