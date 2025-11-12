@@ -41,7 +41,6 @@ const transactionRoutes = async (app: FastifyTypedInstance) => {
     TransactionControllers.withdraw
   );
 
-
   app.post<{ Body: TransferToController }>(
     '/transfer',
     {
