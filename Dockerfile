@@ -17,12 +17,11 @@ RUN npx prisma generate
 RUN npx tsc
 
 
-FROM node:22-slim AS runner
+FROM node:22 AS runner
 
 WORKDIR /app
 
-RUN apt-get update -y && apt-get install -y openssl
-
+RUN apt-get update -y && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/node_modules ./node_modules
