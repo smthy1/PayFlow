@@ -8,7 +8,9 @@ RUN npm install
 
 COPY . .
 
-RUN npx prisma generate --schema=src/modules/prisma/schema.prisma
+RUN apt-get update -y && apt-get install -y openssl
+
+RUN npx prisma generate --schema=src/modules/prisma/schema.prisma --binary-target=debian-openssl-3.0.x
 
 RUN npx tsc
 
@@ -16,6 +18,10 @@ RUN npx tsc
 FROM node:22-slim AS runner
 
 WORKDIR /app
+
+RUN apt-get update -y && apt-get install -y openssl
+
+
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
