@@ -38,5 +38,5 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
-  "include": ["src"]
+  "include": ["src", "node_modules/@prisma/client"]
 }

@@ -8,11 +8,8 @@ RUN npm install
 
 COPY . .
 
-RUN ls -la src/modules/prisma
 
-RUN apt-get update -y && apt-get install -y openssl
-
-RUN npx prisma generate
+RUN npx prisma generate --schema=src/modules/prisma/schema.prisma
 
 RUN npx tsc
 
