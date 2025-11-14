@@ -1,4 +1,4 @@
-import prisma from "../prisma/prisma.services.js";
+import { prisma } from "../prisma/prisma.services.js";
 import { convertCentsToBRL } from "../transaction/shared/conversion.js";
 
 

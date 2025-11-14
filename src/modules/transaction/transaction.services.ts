@@ -1,4 +1,4 @@
-import prisma from "../prisma/prisma.services.js";
+import { prisma } from "../prisma/prisma.services.js";
 import type { DepositInput, TransferData, WithdrawalData } from "./transaction.schemas.js";
 import { convertToCents, convertCentsToBRL } from "./shared/conversion.js";
 import { Prisma } from "@prisma/client";

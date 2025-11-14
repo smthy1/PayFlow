@@ -1,11 +1,10 @@
-import prisma from "../prisma/prisma.services.js";
+import { prisma } from "../prisma/prisma.services.js";
 import type { RegisterUserInput, LoginUserInput } from "./auth.schemas.js";
 import bcrypt from 'bcrypt';
 import 'dotenv/config'
 
 async function registerUser(userData: RegisterUserInput) {
-    try {
-        
+    try {   
         const existingEmail = await prisma.user.findUnique({
             where: { email: userData.email }
         });
