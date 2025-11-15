@@ -7,7 +7,6 @@
 [![Fastify](https://img.shields.io/badge/Fastify-4.28-green)](https://fastify.dev/)  
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green)](https://supabase.com)  
 [![Docker](https://img.shields.io/badge/Docker-Deployed-blue)](https://docker.com)  
-[![Tests](https://github.com/lplSmith/payflow-api/actions/workflows/test.yml/badge.svg)](https://github.com/lplSmith/payflow-api/actions)
 
 ---
 
