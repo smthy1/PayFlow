@@ -28,6 +28,12 @@ const authRoutes = async (app: FastifyTypedInstance) => {
                 tags: ['auth'],
                 body: loginUserSchema,
                 response: { 200: authResponseSchema }
+            },
+            config: {
+                rateLimit: {
+                    max: 100,
+                    timeWindow: '1 minute'
+                }
             }
         }, 
         AuthControllers.login

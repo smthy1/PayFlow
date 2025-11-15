@@ -9,6 +9,7 @@ import { depositSchema, depositResponseSchema, withdrawalDataToControllerSchema,
 } from './transaction.schemas.js';
 import { authToken } from '../../middlewares/authMiddleware.js';
 import  { validateSchema } from '../../middlewares/validateSchema.js';
+import { basicRateLimit } from '../../middlewares/rateLimit.js';
 
 
 const transactionRoutes = async (app: FastifyTypedInstance) => {
@@ -21,6 +22,9 @@ const transactionRoutes = async (app: FastifyTypedInstance) => {
         tags: ['transactions'],
         body: depositSchema,
         response: { 200: depositResponseSchema }
+      },
+      config: {
+        rateLimit: basicRateLimit
       }
     },
     TransactionControllers.deposit
@@ -36,6 +40,9 @@ const transactionRoutes = async (app: FastifyTypedInstance) => {
         body: withdrawalDataToControllerSchema,
         response: { 200: withdrawalResponseSchema }
 
+      },
+      config: {
+        rateLimit: basicRateLimit
       }
     },
     TransactionControllers.withdraw
@@ -50,10 +57,13 @@ const transactionRoutes = async (app: FastifyTypedInstance) => {
         tags: ['transactions'],
         body: transferToControllerSchema,
         response: { 200: transferResponseSchema }
+      },
+      config: {
+        rateLimit: basicRateLimit
       }
     },
     TransactionControllers.transfer
-  )
+  );
 };
 
 export default transactionRoutes;

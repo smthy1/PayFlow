@@ -35,6 +35,8 @@ app.register(fastifySwaggerUi, {
 });
 
 
+await app.register(import ('@fastify/rate-limit'));
+
 app.register(authRoutes, { prefix: '/auth' });
 app.register(transactionRoutes, { prefix: '/transactions' });
 app.register(healthRoutes, { prefix: '/health' });

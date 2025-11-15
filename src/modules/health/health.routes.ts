@@ -1,4 +1,4 @@
-import type { FastifyInstance, FastifyRequest } from "fastify";
+import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { authToken } from "../../middlewares/authMiddleware.js";
 
 interface HealthCheck {
@@ -6,7 +6,15 @@ interface HealthCheck {
 }
 
 const  healthRoutes = async (app: FastifyInstance) => {
-    app.post<{ Body: HealthCheck }>('/', { preHandler: [authToken] }, async (req: FastifyRequest<{ Body: HealthCheck }>, reply) => {
+    app.get('/', async (req: FastifyRequest, reply: FastifyReply) => {
+        try {
+            return reply.status(200).send({ status: 'ok' });
+        } catch (err) {
+            return reply.status(500).send({ error: err });
+        }
+    });
+    
+    app.post<{ Body: HealthCheck }>('/test', { preHandler: [authToken] }, async (req: FastifyRequest<{ Body: HealthCheck }>, reply) => {
         try {
             const { content } = req.body;
 

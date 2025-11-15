@@ -1,8 +1,8 @@
 import * as UserControllers from './user.controllers.js'
 import type { FastifyTypedInstance } from '../shared/FastifyTypedInstance.js'
-import { validateSchema } from '../../middlewares/validateSchema.js'
 import { getUserBalanceResponseSchema } from './user.schemas.js'
 import { authToken } from '../../middlewares/authMiddleware.js'
+import { basicRateLimit } from '../../middlewares/rateLimit.js'
 
 
 const userRoutes = async (app: FastifyTypedInstance) => {
@@ -14,6 +14,9 @@ const userRoutes = async (app: FastifyTypedInstance) => {
                 description: 'Retorna saldo do usuário',
                 tags: ['user'],
                 response: { 200: getUserBalanceResponseSchema }
+            },
+            config: {
+                rateLimit: basicRateLimit
             }
         },
         UserControllers.getUserBalance

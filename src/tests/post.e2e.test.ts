@@ -20,7 +20,7 @@ beforeAll(async ()=> {
 });
 
 
-describe('POST /health', ()=> {
+describe('POST /health/test', ()=> {
     it("should return a message", async ()=> {
         const res = await request(app.server)
             .post('/health')
