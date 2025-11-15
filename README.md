@@ -69,7 +69,7 @@ Simula um sistema bancário com:
 
     GET   /health  -> Health Check da api que retorna { status: ok }
 
-    - POST /health/test -> Health Check exclusivo pra testes com GitHub Actions que retorna { content: Hello World! }
+    POST /health/test -> Health Check exclusivo pra testes com GitHub Actions que retorna { content: Hello World! }
 ```
 
 ## Deploy
