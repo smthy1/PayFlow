@@ -74,8 +74,15 @@ Simula um sistema bancário com:
 
 ## Deploy
 
-- **Hospedado no Render**  
+- **Hospedado no Render** (Free Tier)  
 - **Containerizado com Docker**  
 - **Variáveis de ambiente seguras**
 
-> **Nota:** No plano gratuito do Render, o primeiro request pode levaria alguns segundos (cold start), mas contornei isso através do UptimeRobot.  
+> **Nota sobre Cold Start:**  
+> No Render Free, a API "dorme" após **15 minutos** de inatividade → primeiro request poderia levar mais de **5 segundos**.
+>  
+> **Solução implementada:**  
+> **UptimeRobot** faz ping no endpoint `/health` a **cada 14 minutos** → mantém a API **sempre aquecida**.  
+>
+> **Resultado:** Primeiro acesso em **< 800ms**, mesmo após horas parado.  
+
