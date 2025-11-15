@@ -1,12 +1,19 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { authToken } from "../../middlewares/authMiddleware.js";
+import { type HealthCheck, healthCheckSchema  } from "./health.schemas.js";
 
-interface HealthCheck {
-    content: string
-}
+
 
 const  healthRoutes = async (app: FastifyInstance) => {
-    app.get('/', async (req: FastifyRequest, reply: FastifyReply) => {
+    app.get('/', 
+        {
+            schema: {
+                description: "Health check",
+                tags: ['health'],
+                response: { 200: 'ok' }
+            }
+        }, 
+        async (req: FastifyRequest, reply: FastifyReply) => {
         try {
             return reply.status(200).send({ status: 'ok' });
         } catch (err) {
@@ -14,7 +21,18 @@ const  healthRoutes = async (app: FastifyInstance) => {
         }
     });
     
-    app.post<{ Body: HealthCheck }>('/test', { preHandler: [authToken] }, async (req: FastifyRequest<{ Body: HealthCheck }>, reply) => {
+    app.post<{ Body: HealthCheck }>(
+        '/test', 
+        {
+            preHandler: [authToken],
+            schema: {
+                description: "Health check with login",
+                tags: ['auth'],
+                body: healthCheckSchema,
+                response: { 200: healthCheckSchema }
+            }
+        }, 
+        async (req: FastifyRequest<{ Body: HealthCheck }>, reply) => {
         try {
             const { content } = req.body;
 
