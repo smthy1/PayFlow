@@ -3,7 +3,6 @@ import { authToken } from "../../middlewares/authMiddleware.js";
 import { type HealthCheck, healthCheckSchema  } from "./health.schemas.js";
 
 
-
 const  healthRoutes = async (app: FastifyInstance) => {
     app.get('/', 
         {
