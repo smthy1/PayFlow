@@ -1,4 +1,4 @@
-import { prisma } from "../prisma/prisma.services.js";
+import  prisma from "../prisma/prisma.services.js";
 import type { RegisterUserInput, LoginUserInput } from "./auth.schemas.js";
 import bcrypt from 'bcrypt';
 import 'dotenv/config'

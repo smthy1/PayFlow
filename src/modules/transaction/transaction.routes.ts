@@ -1,4 +1,4 @@
-import type { FastifyTypedInstance } from './shared/FastifyTypedInstance.js';
+import type { FastifyTypedInstance } from '../shared/FastifyTypedInstance.js';
 import * as TransactionControllers from './transaction.controllers.js';
 import { depositSchema, depositResponseSchema, withdrawalDataToControllerSchema, 
   type DepositInput, type WithdrawalDataToController, 

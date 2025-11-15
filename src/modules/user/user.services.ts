@@ -1,5 +1,5 @@
-import { prisma } from "../prisma/prisma.services.js";
-import { convertCentsToBRL } from "../transaction/shared/conversion.js";
+import prisma from "../prisma/prisma.services.js";
+import { convertCentsToBRL } from "../shared/conversion.js";
 
 
 async function getUserBalance(userId: string) {
