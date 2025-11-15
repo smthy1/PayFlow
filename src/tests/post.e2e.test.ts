@@ -1,7 +1,7 @@
 import request from 'supertest';
 import app from "../app.js";
 import { describe, it, beforeAll, afterAll, expect, jest } from '@jest/globals';
-import { prisma } from '../modules/prisma/prisma.services.js';
+import prisma from '../modules/prisma/prisma.services.js';
 
 
 let token: string;
