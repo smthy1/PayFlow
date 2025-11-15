@@ -47,6 +47,7 @@ jobs:
       - name: Set environment variables
         run: |
           echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/testdb" >> $GITHUB_ENV
+          echo "DIRECT_URL=postgresql://postgres:postgres@localhost:5432/testdb" >> $GITHUB_ENV
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> $GITHUB_ENV
 
       - name: Generate Prisma client
