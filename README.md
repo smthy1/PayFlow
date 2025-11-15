@@ -78,4 +78,4 @@ Simula um sistema bancário com:
 - **Containerizado com Docker**  
 - **Variáveis de ambiente seguras**
 
-> **Nota:** No plano gratuito do Render, o primeiro request pode levaria alguns segundos (cold start), mas contornei isso através do (UptimeRobot)[https://uptimerobot.com/].  
+> **Nota:** No plano gratuito do Render, o primeiro request pode levaria alguns segundos (cold start), mas contornei isso através do UptimeRobot.  
