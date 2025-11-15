@@ -3,8 +3,8 @@
 
 [![Render](https://img.shields.io/badge/Render-Deployed-brightgreen)](https://payflow-api.onrender.com)  
 [![Node.js](https://img.shields.io/badge/Node.js-22-blue)](https://nodejs.org)  
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)  
-[![Fastify](https://img.shields.io/badge/Fastify-4.28-green)](https://fastify.dev/)  
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)](https://www.typescriptlang.org/)  
+[![Fastify](https://img.shields.io/badge/Fastify-5.6-green)](https://fastify.dev/)  
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green)](https://supabase.com)  
 [![Docker](https://img.shields.io/badge/Docker-Deployed-blue)](https://docker.com)  
 
