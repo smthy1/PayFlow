@@ -18,12 +18,20 @@ const register = async (req: FastifyRequest<{ Body: RegisterUserInput }>, reply:
             id: newUser?.id,
             name: newUser?.name
         }, key, { expiresIn: '2h' });
+        
+        reply.setCookie("token", accessToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+            path: "/",
+            signed: true
+        });
 
-        return reply.status(201).send({ message: "Usuário registrado", token: accessToken });
+        return reply.status(201).send({ message: "Usuário registrado" });
     } catch (err) {
         return reply.status(500).send({ error: "Erro interno no servidor: " + err });
     }
-}
+};
 
 const login = async(req: FastifyRequest<{ Body: LoginUserInput }>, reply: FastifyReply) => {
     try {
@@ -40,8 +48,16 @@ const login = async(req: FastifyRequest<{ Body: LoginUserInput }>, reply: Fastif
             id: user?.id,
             name: user?.name,
         }, key, { expiresIn: '2h' });
+
+        reply.setCookie("token", accessToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+            path: "/",
+            signed: true
+        });
         
-        return reply.status(200).send({ message: "Usuário autenticado", token: accessToken });
+        return reply.status(200).send({ message: "Usuário autenticado" });
     } catch (err) {
         return reply.status(500).send({ error: "Erro interno no servidor: " + err });
     }

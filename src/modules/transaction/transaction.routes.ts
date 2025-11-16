@@ -2,7 +2,7 @@ import type { FastifyTypedInstance } from '../shared/FastifyTypedInstance.js';
 import * as TransactionControllers from './transaction.controllers.js';
 import { depositSchema, depositResponseSchema, withdrawalDataToControllerSchema, 
   type DepositInput, type WithdrawalDataToController, 
-  transferToControllerSchema,
+  transferSchemaToController,
   type TransferToController,
   withdrawalResponseSchema,
   transferResponseSchema
@@ -18,7 +18,7 @@ const transactionRoutes = async (app: FastifyTypedInstance) => {
     {
       preHandler: [authToken, validateSchema(depositSchema)],
       schema: {
-        description: 'Deposit',
+        description: 'Adiciona saldo na conta',
         tags: ['transactions'],
         body: depositSchema,
         response: { 200: depositResponseSchema }
@@ -51,11 +51,11 @@ const transactionRoutes = async (app: FastifyTypedInstance) => {
   app.post<{ Body: TransferToController }>(
     '/transfer',
     {
-      preHandler: [authToken, validateSchema(transferToControllerSchema)],
+      preHandler: [authToken, validateSchema(transferSchemaToController)],
       schema: {
-        description: 'Transfer',
+        description: 'Transferência entre usuários',
         tags: ['transactions'],
-        body: transferToControllerSchema,
+        body: transferSchemaToController,
         response: { 200: transferResponseSchema }
       },
       config: {

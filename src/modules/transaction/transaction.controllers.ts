@@ -5,14 +5,12 @@ import type { DepositInput, TransferToController, WithdrawalDataToController } f
 
 const deposit = async (req: FastifyRequest<{ Body: DepositInput }>, reply: FastifyReply) => {
     try {
-        const amount = req.body;
+        const amount = req.body.amount;
         const userId = req.user!.id;
         
-        const depositResult = await TransactionServices.deposit({ amount: amount.amount },  userId );
+        const depositResult = await TransactionServices.deposit({ amount: amount },  userId );
         
         if(!depositResult.message) return reply.status(400).send({ error: depositResult });
-
-        console.log(depositResult);
 
         return reply.status(200).send(depositResult);
     } catch (err) {
@@ -43,7 +41,7 @@ const transfer = async(req: FastifyRequest<{ Body: TransferToController }>, repl
         const { toUserEmail, transferAmount } = req.body;
         const fromUserId = req.user!.id;
 
-        if(!toUserEmail || !transferAmount) return reply.status(400).send(
+        if (!toUserEmail || !transferAmount) return reply.status(400).send(
             { error: "Informações necessárias para transferência: Email do recebedor e quantidade a ser transferida" }
         );
 
@@ -57,4 +55,4 @@ const transfer = async(req: FastifyRequest<{ Body: TransferToController }>, repl
 };
 
 
-export { deposit, withdraw, transfer }
+export { deposit, withdraw, transfer };

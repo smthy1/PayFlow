@@ -1,17 +1,21 @@
+import 'dotenv/config';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { JWTPayload } from '../modules/shared/JWTPayloadInterface.js';
-import jwt from 'jsonwebtoken'
-import 'dotenv/config'
+import jwt from 'jsonwebtoken';
 
 
-export const authToken = async (req: FastifyRequest, res: FastifyReply) => {
-    const authHeader = req.headers.authorization;
 
-    if(!authHeader) return res.status(401).send({ error: "Token não fornecido" });
+export const authToken = async (req: FastifyRequest, reply: FastifyReply) => {
+    const signedToken = req.cookies.token;
 
-    const [scheme, token] = authHeader.split(' ');
 
-    if (!token || scheme !== "Bearer") return res.status(401).send({ error: "Token malformado" });
+    if (!signedToken) return reply.status(401).send({ error: "Token não fornecido" });
+    
+    const unsignedCookie = req.unsignCookie(signedToken);
+        
+    if (!unsignedCookie.valid) return reply.status(401).send({ error: "Cookie inválido" });
+        
+    const token = unsignedCookie.value;
 
     try {
         const key = process.env.JWT_SECRET as string;
@@ -19,7 +23,7 @@ export const authToken = async (req: FastifyRequest, res: FastifyReply) => {
 
         req.user = decoded;
     } catch (err) {
-        return res.status(401).send({ error: err });
+        return reply.status(401).send({ error: `Token inválido ${err}` });
     }
 };
 

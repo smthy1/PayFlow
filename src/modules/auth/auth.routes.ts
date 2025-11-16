@@ -2,6 +2,7 @@ import type { FastifyTypedInstance } from '../shared/FastifyTypedInstance.js';
 import * as AuthControllers from './auth.controllers.js';
 import { loginUserSchema, registerUserSchema, authResponseSchema, type RegisterUserInput, type LoginUserInput } from "./auth.schemas.js";
 import { validateSchema } from "../../middlewares/validateSchema.js";
+import { basicRateLimit } from '../../middlewares/rateLimit.js';
 
 
 const authRoutes = async (app: FastifyTypedInstance) => {
@@ -30,10 +31,7 @@ const authRoutes = async (app: FastifyTypedInstance) => {
                 response: { 200: authResponseSchema }
             },
             config: {
-                rateLimit: {
-                    max: 100,
-                    timeWindow: '1 minute'
-                }
+                rateLimit: basicRateLimit
             }
         }, 
         AuthControllers.login

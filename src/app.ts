@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import fastify from "fastify";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
@@ -5,8 +6,11 @@ import authRoutes from "./modules/auth/auth.routes.js";
 import healthRoutes from "./modules/health/health.routes.js";
 import transactionRoutes from "./modules/transaction/transaction.routes.js";
 import { jsonSchemaTransform, serializerCompiler, validatorCompiler, type ZodTypeProvider } from "fastify-type-provider-zod";
+import rateLimit from "@fastify/rate-limit";
+import cookie from "@fastify/cookie";
 import fastifyCors from "@fastify/cors";
 import userRoutes from "./modules/user/user.routes.js";
+
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -35,7 +39,11 @@ app.register(fastifySwaggerUi, {
 });
 
 
-await app.register(import ('@fastify/rate-limit'));
+app.register(rateLimit);
+app.register(cookie, {
+    secret: process.env.COOKIE_SECRET as string,
+    hook: 'onRequest',
+});
 
 app.register(authRoutes, { prefix: '/auth' });
 app.register(transactionRoutes, { prefix: '/transactions' });

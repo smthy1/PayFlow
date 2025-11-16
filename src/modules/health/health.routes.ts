@@ -29,7 +29,7 @@ const  healthRoutes = async (app: FastifyInstance) => {
                 description: "Health check with login",
                 tags: ['auth'],
                 body: healthCheckSchema,
-                response: { 200: healthCheckSchema }
+                response: { 201: healthCheckSchema }
             }
         }, 
         async (req: FastifyRequest<{ Body: HealthCheck }>, reply) => {

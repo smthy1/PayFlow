@@ -28,7 +28,7 @@ async function deposit (userInputData: DepositInput, userId: string) {
                 }
             });
 
-            const newUserBalanceConverted = convertCentsToBRL(updateUserBalance.balance)
+            const newUserBalanceConverted = convertCentsToBRL(updateUserBalance.balance);
 
             const transactionDetails = {
                 type: createTransaction.type,
@@ -105,20 +105,22 @@ async function withdraw(withdrawalData: WithdrawalData) {
 async function transfer(transferData: TransferData) {
     const { fromUserId, toUserEmail, transferAmount } = transferData;
     
-    const convertedTransferAmount = convertToCents(transferAmount);
+    const convertedToCentsTransferAmount = convertToCents(transferAmount);
 
     const transaction = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         
         const fromUser = await tx.user.findUnique({ where: { id: fromUserId }, select: {  balance: true } });
-        const toUser = await tx.user.findUnique({ where: { email: toUserEmail }, select: {id: true, balance: true } });
+        const toUser = await tx.user.findUnique({ where: { email: toUserEmail }, select: { id: true, balance: true } });
             
         if (!fromUser || !toUser) return { error: "Usuários não encontrados" };
-    
-        if (fromUser.balance < convertedTransferAmount) return { error: "Saldo insuficiente para realizar a transação" };
+
+        if (fromUserId === toUser.id) return { error: "Transferências para a própria conta não são permitidas" };
+
+        if (fromUser.balance < convertedToCentsTransferAmount) return { error: "Saldo insuficiente para realizar a transação" };
 
         const transfer = await tx.transaction.create({
             data:  {
-                amount: convertedTransferAmount,
+                amount: convertedToCentsTransferAmount,
                 fromUserId: fromUserId,
                 toUserId: toUser.id,
                 type: 'TRANSFER'
@@ -128,20 +130,24 @@ async function transfer(transferData: TransferData) {
         await tx.user.update({
             where: {id: fromUserId},
             data: {
-                balance: { decrement: convertedTransferAmount }
+                balance: { decrement: convertedToCentsTransferAmount }
             }
         });
 
         await tx.user.update({
             where: {id: toUser.id },
             data: {
-                balance: { increment: convertedTransferAmount }
+                balance: { increment: convertedToCentsTransferAmount }
             }
         });
 
+        const treatedTransferAmount = transferAmount.toLocaleString("pt-BR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
         const transactionDetails = {
             type: transfer.type,
-            amount:`R$ ${transferAmount}`,
+            amount:`R$ ${treatedTransferAmount}`,
             id: transfer.id,
             createdAt: transfer.createdAt,
             fromUserId: transfer.fromUserId,

@@ -11,7 +11,7 @@ const userRoutes = async (app: FastifyTypedInstance) => {
         {
             preHandler: [authToken],
             schema: {
-                description: 'Retorna saldo do usuário',
+                description: 'Consulta o saldo do usuário',
                 tags: ['user'],
                 response: { 200: getUserBalanceResponseSchema }
             },

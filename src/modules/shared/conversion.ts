@@ -4,7 +4,11 @@ function convertToCents(value: number) {
 }
 
 function convertCentsToBRL(value: bigint) {
-    return Number(value) / 100;
+    const reais = Number(value) / 100;
+    return reais.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
 }
 
 export { convertToCents, convertCentsToBRL };

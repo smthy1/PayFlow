@@ -84,5 +84,4 @@ Simula um sistema bancário com:
 > **Solução implementada:**  
 > **UptimeRobot** faz ping no endpoint `/health` a **cada 14 minutos** → mantém a API **sempre aquecida**.  
 >
-> **Resultado:** Primeiro acesso em **< 800ms**, mesmo após horas parado.  
-
+> **Resultado:** Primeiro acesso em **< 800ms**, mesmo após horas parado.
