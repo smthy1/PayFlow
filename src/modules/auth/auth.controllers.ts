@@ -24,7 +24,8 @@ const register = async (req: FastifyRequest<{ Body: RegisterUserInput }>, reply:
             secure: true,
             sameSite: "strict",
             path: "/",
-            signed: true
+            signed: true,
+            maxAge: 2 * 60 * 60 * 1000
         });
 
         return reply.status(201).send({ message: "Usuário registrado" });
@@ -54,7 +55,8 @@ const login = async(req: FastifyRequest<{ Body: LoginUserInput }>, reply: Fastif
             secure: true,
             sameSite: "strict",
             path: "/",
-            signed: true
+            signed: true,
+            maxAge: 2 * 60 * 60 * 1000
         });
         
         return reply.status(200).send({ message: "Usuário autenticado" });

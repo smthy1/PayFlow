@@ -28,7 +28,7 @@ app.register(fastifySwagger, {
             description: "API de pagamentos"
         },
         components: { 
-            securitySchemes: { bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' } }
+            securitySchemes: { cookieAuth: { type: 'apiKey', in: 'cookie', name: 'token' } }
         }
     },
     transform: jsonSchemaTransform,
