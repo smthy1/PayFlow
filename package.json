@@ -1,8 +1,8 @@
 {
-  "name": "payflow",
+  "name": "payflow-api",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Bank transaction simulation API",
+  "main": "dist/server.js",
   "prisma": {
     "schema": "src/modules/prisma/schema.prisma"
   },
