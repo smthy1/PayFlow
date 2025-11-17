@@ -21,7 +21,7 @@ Simula um sistema bancário com:
 - Consultar saldo  
 
 > **Dinheiro em centavos** → precisão total (R$ 10,50 = 1050)  
-> Conversão automática em reais no `GET /balance`
+> Conversão automática em reais no `GET /user/balance`
 
 
 ## Funcionalidades
@@ -68,8 +68,6 @@ Simula um sistema bancário com:
     GET   /user/balance -> Saldo em reais
 
     GET   /health  -> Health Check da api que retorna { status: ok }
-
-    POST /health/test -> Health Check exclusivo pra testes com GitHub Actions que retorna { content: Hello World! }
 ```
 
 ## Deploy
