@@ -1,8 +1,9 @@
 import type { FastifyTypedInstance } from '../shared/FastifyTypedInstance.js';
 import * as AuthControllers from './auth.controllers.js';
-import { loginUserSchema, registerUserSchema, authResponseSchema, type RegisterUserInput, type LoginUserInput } from "./auth.schemas.js";
+import { loginUserSchema, registerUserSchema, authResponseSchema, type RegisterUserInput, type LoginUserInput, forgotPasswordResponseSchema, type ForgotPasswordUserInput } from "./auth.schemas.js";
 import { validateSchema } from "../../middlewares/validateSchema.js";
 import { basicRateLimit } from '../../middlewares/rateLimit.js';
+import { authToken } from '../../middlewares/authMiddleware.js';
 
 
 const authRoutes = async (app: FastifyTypedInstance) => {
@@ -35,6 +36,19 @@ const authRoutes = async (app: FastifyTypedInstance) => {
             }
         }, 
         AuthControllers.login
+    );
+
+    app.post<{Body: ForgotPasswordUserInput}>(
+        '/forgot-password',
+        {
+            preHandler: [authToken],
+            schema: {
+                description: 'Envio de email pra reset de senha',
+                tags: ['auth'],
+                response: { 200: forgotPasswordResponseSchema }
+            }
+        },
+        AuthControllers.forgotPassword
     );
 };
 

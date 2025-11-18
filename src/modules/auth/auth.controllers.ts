@@ -1,7 +1,6 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import * as AuthService from "./auth.services.js";
 import type { RegisterUserInput, LoginUserInput, ForgotPasswordUserInput } from "./auth.schemas.js";
-import jwt from 'jsonwebtoken';
 
 const register = async (req: FastifyRequest<{ Body: RegisterUserInput }>, reply: FastifyReply) => {
     try {
@@ -28,7 +27,7 @@ const register = async (req: FastifyRequest<{ Body: RegisterUserInput }>, reply:
     }
 };
 
-const login = async(req: FastifyRequest<{ Body: LoginUserInput }>, reply: FastifyReply) => {
+const login = async (req: FastifyRequest<{ Body: LoginUserInput }>, reply: FastifyReply) => {
     const { email, password } = req.body;
     try {
         
@@ -54,14 +53,19 @@ const login = async(req: FastifyRequest<{ Body: LoginUserInput }>, reply: Fastif
     }
 };
 
-const forgotPassword = async(req: FastifyRequest<{ Body: ForgotPasswordUserInput }>, reply: FastifyReply) => {
+const forgotPassword = async (req: FastifyRequest<{ Body: ForgotPasswordUserInput }>, reply: FastifyReply) => {
     const { email } = req.body;
-    
     try {
-        await AuthService.fogortPassword({ email: email });
+        AuthService.fogortPassword({ email: email });
         return reply.status(200).send({ message: "Caso for um email válido, o link será enviado" });
     } catch (err) {
         return { error: `Erro interno no servidor ${err}` };
     }
 };
-export { register, login, forgotPassword };
+
+const resetPassword = async (req: FastifyRequest, reply: FastifyReply) => {
+
+};
+
+
+export { register, login, forgotPassword, resetPassword };

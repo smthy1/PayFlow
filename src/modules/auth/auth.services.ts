@@ -3,6 +3,7 @@ import type { RegisterUserInput, LoginUserInput, ForgotPasswordUserInput } from 
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import 'dotenv/config'
+import { sendEmailToResetPassword } from "../email/send-email.service.js";
 
 async function registerUser(userData: RegisterUserInput) {
     try {   
@@ -62,17 +63,25 @@ async function loginUser(userData: LoginUserInput) {
     }
 }
 
-async function fogortPassword(userData: ForgotPasswordUserInput) {
-    const { email } = userData;
-
+async function fogortPassword(userEmail: ForgotPasswordUserInput) {
+    const email = userEmail.email;
+    
     try {
-        const findEmail = await prisma.user.findUnique({ where: { email: email } });
-        if(!findEmail) return { error: "Email do usuário não encontrado" };
+        const findUser = await prisma.user.findUnique({ where: { email: email } });
 
-        
+        if(!findUser) return { error: "Email do usuário não encontrado" };
+
+        const resetPasswordSecret = process.env.JWT_RESET_PASSWORD_SECRET as string;
+        const token = jwt.sign({ 
+            id: findUser.id,
+        }, resetPasswordSecret, { expiresIn: '30m'});
+
+        const url = process.env.RENDER_URL as string;
+        await sendEmailToResetPassword({ email: email, resetLink: `${url}auth/reset-password/${token}` });
     } catch (err) {
         return { unexpectedError: err };
     }
 }
 
-export { registerUser, loginUser, fogortPassword } ;
+
+export { registerUser, loginUser, fogortPassword };

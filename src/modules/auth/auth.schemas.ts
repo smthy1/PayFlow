@@ -36,6 +36,10 @@ export const forgotPasswordSchema = z.object({
         .toLowerCase(),
 });
 
+export const forgotPasswordResponseSchema = z.object({
+    message: z.string()
+});
+
 export type RegisterUserInput = z.infer<typeof registerUserSchema>;
 export type LoginUserInput = z.infer<typeof loginUserSchema>;
 export type ForgotPasswordUserInput = z.infer<typeof forgotPasswordSchema>;
