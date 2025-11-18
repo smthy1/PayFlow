@@ -30,5 +30,12 @@ export const authResponseSchema = z.object({
 });
 
 
+export const forgotPasswordSchema = z.object({
+    email: z.email({ error: 'Formato de email inválido' })
+        .trim()
+        .toLowerCase(),
+});
+
 export type RegisterUserInput = z.infer<typeof registerUserSchema>;
 export type LoginUserInput = z.infer<typeof loginUserSchema>;
+export type ForgotPasswordUserInput = z.infer<typeof forgotPasswordSchema>;

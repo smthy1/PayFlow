@@ -1,6 +1,6 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import * as AuthService from "./auth.services.js";
-import type { RegisterUserInput, LoginUserInput } from "./auth.schemas.js";
+import type { RegisterUserInput, LoginUserInput, ForgotPasswordUserInput } from "./auth.schemas.js";
 import jwt from 'jsonwebtoken';
 
 const register = async (req: FastifyRequest<{ Body: RegisterUserInput }>, reply: FastifyReply) => {
@@ -11,14 +11,8 @@ const register = async (req: FastifyRequest<{ Body: RegisterUserInput }>, reply:
 
         if(registerUserResult.error || registerUserResult.unexpectedError) return reply.status(400).send(registerUserResult);
 
-        const newUser = registerUserResult.user;
-        const key = process.env.JWT_SECRET as string;
-        
-        const accessToken = jwt.sign({
-            id: newUser?.id,
-            name: newUser?.name
-        }, key, { expiresIn: '2h' });
-        
+        const accessToken = registerUserResult.accessToken!;
+
         reply.setCookie("token", accessToken, {
             httpOnly: true,
             secure: true,
@@ -28,27 +22,22 @@ const register = async (req: FastifyRequest<{ Body: RegisterUserInput }>, reply:
             maxAge: 2 * 60 * 60 * 1000
         });
 
-        return reply.status(201).send({ message: "Usuário registrado" });
+        return reply.status(201).send({ message: registerUserResult.message });
     } catch (err) {
         return reply.status(500).send({ error: "Erro interno no servidor: " + err });
     }
 };
 
 const login = async(req: FastifyRequest<{ Body: LoginUserInput }>, reply: FastifyReply) => {
+    const { email, password } = req.body;
     try {
-        const { email, password } = req.body;
+        
 
         const loginUserResult = await AuthService.loginUser({ email: email, password: password });
         
         if(loginUserResult.error || loginUserResult.unexpectedError) return reply.status(400).send(loginUserResult);
         
-        const user = loginUserResult.user;
-        const key = process.env.JWT_SECRET as string;
-
-        const accessToken = jwt.sign({
-            id: user?.id,
-            name: user?.name,
-        }, key, { expiresIn: '2h' });
+        const accessToken = loginUserResult.accessToken!;
 
         reply.setCookie("token", accessToken, {
             httpOnly: true,
@@ -59,10 +48,20 @@ const login = async(req: FastifyRequest<{ Body: LoginUserInput }>, reply: Fastif
             maxAge: 2 * 60 * 60 * 1000
         });
         
-        return reply.status(200).send({ message: "Usuário autenticado" });
+        return reply.status(200).send({ message: loginUserResult.message });
     } catch (err) {
         return reply.status(500).send({ error: "Erro interno no servidor: " + err });
     }
 };
 
-export { register, login }
+const forgotPassword = async(req: FastifyRequest<{ Body: ForgotPasswordUserInput }>, reply: FastifyReply) => {
+    const { email } = req.body;
+    
+    try {
+        await AuthService.fogortPassword({ email: email });
+        return reply.status(200).send({ message: "Caso for um email válido, o link será enviado" });
+    } catch (err) {
+        return { error: `Erro interno no servidor ${err}` };
+    }
+};
+export { register, login, forgotPassword };

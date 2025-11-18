@@ -1,6 +1,7 @@
 import  prisma from "../prisma/prisma.services.js";
-import type { RegisterUserInput, LoginUserInput } from "./auth.schemas.js";
+import type { RegisterUserInput, LoginUserInput, ForgotPasswordUserInput } from "./auth.schemas.js";
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import 'dotenv/config'
 
 async function registerUser(userData: RegisterUserInput) {
@@ -18,12 +19,19 @@ async function registerUser(userData: RegisterUserInput) {
             data: { ...userData, password: hashedPassword } 
         });
 
-        return { message: "Usuário registrado", user: createUser };
+        const name = createUser.name;
+        const key = process.env.JWT_SECRET as string;
+        
+        const accessToken = jwt.sign({
+            id: createUser.id,
+            name: name
+        }, key, { expiresIn: '2h' });
+
+        return { message: "Usuário registrado e autenticado", accessToken: accessToken };
     } catch (err) {
         return { unexpectedError: err };
     }
 }
-
 
 async function loginUser(userData: LoginUserInput) {
     try {
@@ -38,12 +46,33 @@ async function loginUser(userData: LoginUserInput) {
 
         const comparePassword = await bcrypt.compare(password, userPassword);
         if (!comparePassword) return { error: "Credenciais inválidas" };
+        
+        const name = findUserByEmail.name;
+        const key = process.env.JWT_SECRET as string;
 
-        return { message: "Credenciais válidas", user: { id: findUserByEmail.id, name: findUserByEmail.name } };
+        const accessToken = jwt.sign({
+            id: findUserByEmail.id,
+            name: name,
+        }, key, { expiresIn: '2h' });
+
+        return { message: "Usuário autenticado", accessToken: accessToken };
 
     } catch (err) {
         return { unexpectedError: err };
     }
 }
 
-export { registerUser, loginUser }
+async function fogortPassword(userData: ForgotPasswordUserInput) {
+    const { email } = userData;
+
+    try {
+        const findEmail = await prisma.user.findUnique({ where: { email: email } });
+        if(!findEmail) return { error: "Email do usuário não encontrado" };
+
+        
+    } catch (err) {
+        return { unexpectedError: err };
+    }
+}
+
+export { registerUser, loginUser, fogortPassword } ;
