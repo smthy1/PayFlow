@@ -26,7 +26,7 @@ Simula um sistema bancário com:
 
 ## Funcionalidades
 
-- Registro & Login (JWT)
+- Registro, Login (JWT), Recuperação de senha com envio de email
 - Depósito
 - Saque
 - Transferência
@@ -51,6 +51,7 @@ Simula um sistema bancário com:
     Rate Limit
     Jest + Supertest
     GitHub Actions (CI)
+    Resend
 ```
 
 ## Endpoints Principais
@@ -59,6 +60,10 @@ Simula um sistema bancário com:
 
     POST   /auth/login -> Login com autenticação JWT
 
+    POST   /auth/forgot-password -> Envio de email para o reset de senha
+
+    PATCH   /auth/reset-password?token=... -> Redefine senha
+
     POST   /transactions/deposit -> Depósito
 
     POST   /transactions/withdraw -> Saque
@@ -66,8 +71,6 @@ Simula um sistema bancário com:
     POST   /transactions/transfer -> Transferência entre usuários
 
     GET   /user/balance -> Saldo em reais
-
-    GET   /health  -> Health Check da api que retorna { status: ok }
 ```
 
 ## Deploy
@@ -77,7 +80,7 @@ Simula um sistema bancário com:
 - **Variáveis de ambiente seguras**
 
 > **Nota sobre Cold Start:**  
-> No Render Free, a API "dorme" após **15 minutos** de inatividade → primeiro request poderia levar mais de **5 segundos**.
+> No Render Free, a API "dorme" após **15 minutos** de inatividade → primeiro request poderia levar mais de **50 segundos**.
 >  
 > **Solução implementada:**  
 > **UptimeRobot** faz ping no endpoint `/health` a **cada 14 minutos** → mantém a API **sempre aquecida**.  
