@@ -1,6 +1,6 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import * as AuthService from "./auth.services.js";
-import type { RegisterUserInput, LoginUserInput, ForgotPasswordUserInput } from "./auth.schemas.js";
+import type { RegisterUserInput, LoginUserInput, ForgotPasswordUserInput, ResetPasswordUserInput, ResetPasswordQueryParams } from "./auth.schemas.js";
 
 const register = async (req: FastifyRequest<{ Body: RegisterUserInput }>, reply: FastifyReply) => {
     try {
@@ -63,8 +63,21 @@ const forgotPassword = async (req: FastifyRequest<{ Body: ForgotPasswordUserInpu
     }
 };
 
-const resetPassword = async (req: FastifyRequest, reply: FastifyReply) => {
+const resetPassword = async (req: FastifyRequest<{ Body: ResetPasswordUserInput, Querystring: ResetPasswordQueryParams }>, reply: FastifyReply) => {
+    const { token } = req.query;
+    const userInput = req.body;
 
+     if(!token) return reply.status(400).send({ error: "Token não fornecido" });
+
+    try {
+        const reset = await AuthService.resetPassword(userInput, { token: token });
+
+        if (!reset.message) return reply.status(400).send(reset);
+
+        return reply.status(200).send(reset);
+    } catch (err) {
+        return reply.status(500).send({ error: `Erro interno no servidor ${err}` });
+    }
 };
 
 

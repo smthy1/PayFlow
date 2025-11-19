@@ -1,4 +1,4 @@
-import { email, z } from 'zod';
+import { z } from 'zod';
 
 const emailToResetPasswordSchema = z.object({
     email: z.email({ error: 'Formato de email inválido' })

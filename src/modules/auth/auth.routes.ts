@@ -1,9 +1,11 @@
 import type { FastifyTypedInstance } from '../shared/FastifyTypedInstance.js';
 import * as AuthControllers from './auth.controllers.js';
-import { loginUserSchema, registerUserSchema, authResponseSchema, type RegisterUserInput, type LoginUserInput, forgotPasswordResponseSchema, type ForgotPasswordUserInput } from "./auth.schemas.js";
+import { loginUserSchema, registerUserSchema, authResponseSchema, type RegisterUserInput, 
+    type LoginUserInput, forgotPasswordResponseSchema,  type ForgotPasswordUserInput, forgotPasswordSchema, 
+    resetPasswordSchema, type ResetPasswordUserInput, type ResetPasswordQueryParams 
+} from "./auth.schemas.js";
 import { validateSchema } from "../../middlewares/validateSchema.js";
 import { basicRateLimit } from '../../middlewares/rateLimit.js';
-import { authToken } from '../../middlewares/authMiddleware.js';
 
 
 const authRoutes = async (app: FastifyTypedInstance) => {
@@ -41,7 +43,7 @@ const authRoutes = async (app: FastifyTypedInstance) => {
     app.post<{Body: ForgotPasswordUserInput}>(
         '/forgot-password',
         {
-            preHandler: [authToken],
+            preHandler: validateSchema(forgotPasswordSchema),
             schema: {
                 description: 'Envio de email pra reset de senha',
                 tags: ['auth'],
@@ -49,6 +51,19 @@ const authRoutes = async (app: FastifyTypedInstance) => {
             }
         },
         AuthControllers.forgotPassword
+    );
+
+    app.patch<{ Body: ResetPasswordUserInput, Querystring: ResetPasswordQueryParams }>(
+        '/reset-password',
+        {
+            preHandler: validateSchema(resetPasswordSchema),
+            schema: {
+                description: 'Reset de senha',
+                tags: ['auth'],
+
+            }
+        },
+        AuthControllers.resetPassword
     );
 };
 

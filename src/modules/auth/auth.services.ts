@@ -1,9 +1,10 @@
 import  prisma from "../prisma/prisma.services.js";
-import type { RegisterUserInput, LoginUserInput, ForgotPasswordUserInput } from "./auth.schemas.js";
+import type { RegisterUserInput, LoginUserInput, ForgotPasswordUserInput, ResetPasswordUserInput, ResetPasswordQueryParams } from "./auth.schemas.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import 'dotenv/config'
 import { sendEmailToResetPassword } from "../email/send-email.service.js";
+
 
 async function registerUser(userData: RegisterUserInput) {
     try {   
@@ -84,4 +85,30 @@ async function fogortPassword(userEmail: ForgotPasswordUserInput) {
 }
 
 
-export { registerUser, loginUser, fogortPassword };
+async function resetPassword(userInput: ResetPasswordUserInput, queryParamToken: ResetPasswordQueryParams) {
+    const { newPassword, confirmPassword } = userInput;
+
+    if(newPassword !== confirmPassword) return { error: "As senhas devem ser iguais" };
+
+    const { token } = queryParamToken;
+    const key = process.env.JWT_RESET_PASSWORD_SECRET as string;
+
+    try {
+        const decodedUserId = jwt.verify(token, key) as { id: string };
+        const findUser = await prisma.user.findUnique({ where: { id: decodedUserId.id } });
+
+        if (!findUser) return { error: "Id inválido" };
+
+        await prisma.user.update({ 
+            where: { id: findUser.id },
+            data: { password: newPassword }
+        });
+
+        return { message: "Senha atualizada" };
+    } catch (err) {
+        return { unexpectedError: `Erro inesperado: ${err}` };
+    }
+}
+
+
+export { registerUser, loginUser, fogortPassword, resetPassword };
