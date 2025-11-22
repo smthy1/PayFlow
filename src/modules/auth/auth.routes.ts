@@ -73,6 +73,8 @@ const authRoutes = async (app: FastifyTypedInstance) => {
         {   
             preHandler: authToken,
             schema: {
+                description: 'Rota para auxiliar o front na autenticação',
+                tags:['auth'],
                 response: { 200: authenticateResponseToFrontSchema }
             },
         },
