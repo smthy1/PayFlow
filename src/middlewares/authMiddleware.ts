@@ -20,7 +20,7 @@ export const authToken = async (req: FastifyRequest, reply: FastifyReply) => {
     try {
         const key = process.env.JWT_SECRET as string;
         const decoded = jwt.verify(token, key) as JWTPayload;
-
+        
         req.user = decoded;
     } catch (err) {
         return reply.status(401).send({ error: `Token inválido ${err}` });

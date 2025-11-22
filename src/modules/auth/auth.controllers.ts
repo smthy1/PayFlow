@@ -1,6 +1,9 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import * as AuthService from "./auth.services.js";
 import type { RegisterUserInput, LoginUserInput, ForgotPasswordUserInput, ResetPasswordUserInput, ResetPasswordQueryParams } from "./auth.schemas.js";
+import type { JWTPayload } from "../shared/JWTPayloadInterface.js";
+import jwt from 'jsonwebtoken';
+
 
 const register = async (req: FastifyRequest<{ Body: RegisterUserInput }>, reply: FastifyReply) => {
     try {
@@ -80,5 +83,14 @@ const resetPassword = async (req: FastifyRequest<{ Body: ResetPasswordUserInput,
     }
 };
 
+const authMe = async (req: FastifyRequest, reply: FastifyReply) => {
+    try {
+        if (!req.user) return reply.status(401).send({ authenticate: false });
 
-export { register, login, forgotPassword, resetPassword };
+        reply.status(200).send({ authenticate: true, user: req.user });
+    } catch (err) {
+        return reply.status(500).send({ error: err });
+    }
+};
+
+export { register, login, forgotPassword, resetPassword, authMe };

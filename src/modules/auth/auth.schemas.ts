@@ -26,7 +26,9 @@ export const loginUserSchema = z.object({
 });
 
 export const authResponseSchema = z.object({
+
     message: z.string(),
+
 });
 
 export const forgotPasswordSchema = z.object({
@@ -56,8 +58,20 @@ export const resetPasswordQueryParamsSchema = z.object({
     token: z.string()
 });
 
+
+export const authenticateResponseToFrontSchema = z.object({
+    authenticate: z.boolean(),
+    user: z.object({
+        id: z.string(),
+        name: z.string()
+    })
+});
+
+
 export type RegisterUserInput = z.infer<typeof registerUserSchema>;
 export type LoginUserInput = z.infer<typeof loginUserSchema>;
 export type ForgotPasswordUserInput = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordUserInput = z.infer<typeof resetPasswordSchema>;
 export type ResetPasswordQueryParams = z.infer<typeof resetPasswordQueryParamsSchema>;
+
+export type AuthenticateResponseToFront = z.infer<typeof authenticateResponseToFrontSchema>;

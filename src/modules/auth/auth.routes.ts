@@ -1,11 +1,14 @@
 import type { FastifyTypedInstance } from '../shared/FastifyTypedInstance.js';
 import * as AuthControllers from './auth.controllers.js';
-import { loginUserSchema, registerUserSchema, authResponseSchema, type RegisterUserInput, 
+import { loginUserSchema, registerUserSchema, type RegisterUserInput, 
     type LoginUserInput, forgotPasswordResponseSchema,  type ForgotPasswordUserInput, forgotPasswordSchema, 
-    resetPasswordSchema, type ResetPasswordUserInput, type ResetPasswordQueryParams 
+    resetPasswordSchema, type ResetPasswordUserInput, type ResetPasswordQueryParams, 
+    authResponseSchema,
+    authenticateResponseToFrontSchema
 } from "./auth.schemas.js";
 import { validateSchema } from "../../middlewares/validateSchema.js";
 import { basicRateLimit } from '../../middlewares/rateLimit.js';
+import { authToken } from '../../middlewares/authMiddleware.js';
 
 
 const authRoutes = async (app: FastifyTypedInstance) => {
@@ -60,10 +63,20 @@ const authRoutes = async (app: FastifyTypedInstance) => {
             schema: {
                 description: 'Reset de senha',
                 tags: ['auth'],
-
             }
         },
         AuthControllers.resetPassword
+    );
+
+    app.get(
+        '/me',
+        {   
+            preHandler: authToken,
+            schema: {
+                response: { 200: authenticateResponseToFrontSchema }
+            },
+        },
+        AuthControllers.authMe
     );
 };
 
