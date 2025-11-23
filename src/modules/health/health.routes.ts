@@ -21,4 +21,4 @@ const  healthRoutes = async (app: FastifyInstance) => {
     );
 };
 
-export default healthRoutes
+export default healthRoutes;

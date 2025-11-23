@@ -2,6 +2,7 @@ import prisma from "../prisma/prisma.services.js";
 import type { DepositInput, TransferData, WithdrawalData } from "./transaction.schemas.js";
 import { convertToCents, convertCentsToBRL } from "../shared/conversion.js";
 import { Prisma } from "@prisma/client";
+import { setCacheUserBalance } from "../cache/cache.balance.js";
 
 async function deposit (userInputData: DepositInput, userId: string) {
     try {
@@ -27,7 +28,8 @@ async function deposit (userInputData: DepositInput, userId: string) {
                     balance: { increment: convertedAmount }
                 }
             });
-
+            
+            const newUserBalanceToCache = updateUserBalance.balance;
             const newUserBalanceConverted = convertCentsToBRL(updateUserBalance.balance);
 
             const transactionDetails = {
@@ -39,12 +41,16 @@ async function deposit (userInputData: DepositInput, userId: string) {
                 toUserId: createTransaction.toUserId
             };
             
-            return { message: "Depósito realizado", transactionDetails: transactionDetails, newBalance: `R$ ${newUserBalanceConverted}` }
+            return { 
+                message: "Depósito realizado", transactionDetails: transactionDetails, newBalance: newUserBalanceConverted, balanceToCache: newUserBalanceToCache 
+            }
         });
 
         if(deposit.error) return deposit;
 
-        return { message: deposit.message, transactionDetails: deposit.transactionDetails, newUserBalance: deposit.newBalance };
+        setCacheUserBalance({ userId: userId, balance: deposit.balanceToCache! });
+
+        return { message: deposit.message, transactionDetails: deposit.transactionDetails, newUserBalance: `R$ ${deposit.newBalance}` };
     } catch (err) {
         return { unexpectedError: err };
     } 
@@ -78,7 +84,8 @@ async function withdraw(withdrawalData: WithdrawalData) {
                     balance: { decrement: convertedWithdrawal }
                 }
             });
-
+            
+            const newUserBalanceToCache = updateUserBalance.balance;
             const newUserBalanceConverted = convertCentsToBRL(updateUserBalance.balance);
             
             const transactionDetails = {
@@ -90,12 +97,15 @@ async function withdraw(withdrawalData: WithdrawalData) {
                 toUserId: createTransaction.toUserId
             };
 
-            return { message: "Saque realizado",  transactionDetails: transactionDetails, newBalance: `R$ ${newUserBalanceConverted}`  };
+            return { 
+                message: "Saque realizado",  transactionDetails: transactionDetails, newBalance: newUserBalanceConverted, balanceToCache: newUserBalanceToCache 
+            };
         });
 
         if (transaction.error) return transaction;
 
-        return { message: transaction.message, transactionDetails: transaction.transactionDetails, newUserBalance: transaction.newBalance };
+        setCacheUserBalance({ userId: id, balance: transaction.balanceToCache! });
+        return { message: transaction.message, transactionDetails: transaction.transactionDetails, newUserBalance: `R$ ${transaction.newBalance}` };
     } catch (err) {
         return { unexpectedError: err };
     }
@@ -127,7 +137,7 @@ async function transfer(transferData: TransferData) {
             }
         });
 
-        await tx.user.update({
+        const updateFromUserBalance = await tx.user.update({
             where: {id: fromUserId},
             data: {
                 balance: { decrement: convertedToCentsTransferAmount }
@@ -145,6 +155,7 @@ async function transfer(transferData: TransferData) {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         });
+        
         const transactionDetails = {
             type: transfer.type,
             amount:`R$ ${treatedTransferAmount}`,
@@ -154,11 +165,14 @@ async function transfer(transferData: TransferData) {
             toUserId: transfer.toUserId
         };
 
-        return { message: "Transferência realizada", transactionDetails: transactionDetails };
-
+        return { 
+            message: "Transferência realizada", transactionDetails: transactionDetails, newFromUserBalance: updateFromUserBalance.balance 
+        };
     });
+
     if(!transaction.message) return { error: transaction.error };
     
+    setCacheUserBalance({ userId: fromUserId, balance: transaction.newFromUserBalance });
     return { message: transaction.message, transactionDetails: transaction.transactionDetails };
 }
 
