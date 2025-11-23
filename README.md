@@ -10,32 +10,40 @@
 
 
 
-## O que é?
+## Visão Geral
 
-Uma **API de pagamentos** com **arquitetura modular por features**, pronta pra produção.  
-Simula um sistema bancário com:
+O PayFlow é uma **API de simulação de pagamentos** com **arquitetura modular por features**, autenticação JWT, cache interno e operações com precisão. 
 
-- Depositar  
-- Sacar  
-- Transferir  
-- Consultar saldo  
+# Funcionalidades
+
+## Autenticação e segurança
+
+- Registro e Login (JWT)
+- Recuperação de senha com envio de e-mail
+- Rate Limiting
+- Rotas públicas e protegidas
+- Conversão financeira em centavos (anti-floating point)
+
+## Performance e resiliência
+
+- Cache em memória com TTL
+- UptimeRobot para manter a API acordada e evitar cold start do Render
+- Rota de Health Check
+
+## Operações bancárias
+
+- Depósito
+- Saque
+- Transferência entre usuários
+- Consulta de saldo
 
 > **Dinheiro em centavos** → precisão total (R$ 10,50 = 1050)  
 > Conversão automática em reais no `GET /user/balance`
 
 
-## Funcionalidades
+## Documentação
 
-- Registro, Login (JWT), Recuperação de senha com envio de email
-- Depósito
-- Saque
-- Transferência
-- Saldo em reais
-- Rate Limiting
-- Documentação [Swagger](https://payflow-01fq.onrender.com/docs)
-- Health Check (público + protegido)
-- Testes com Jest + Supertest
-- CI/CD com GitHub Actions
+- Documentado com [Swagger](https://payflow-01fq.onrender.com/docs)
 
 
 ## Tech Stack
@@ -46,29 +54,26 @@ Simula um sistema bancário com:
     Prisma ORM
     Zod (validação)
     JWT Auth
+    Rate Limit
+    Cache interno com TTL
     Docker + Render
     Swagger Docs
-    Rate Limit
     Jest + Supertest
     GitHub Actions (CI)
-    Resend
+    Resend (emails)
 ```
 
 ## Endpoints Principais
+
 ```text
     POST   /auth/register -> Cadastra usuário
-
-    POST   /auth/login -> Login com autenticação JWT
-
+    POST   /auth/login -> Login JWT
     POST   /auth/forgot-password -> Envio de email para o reset de senha
-
-    PATCH   /auth/reset-password?token=... -> Redefine senha
+    PATCH   /auth/reset-password -> Redefine senha
 
     POST   /transactions/deposit -> Depósito
-
     POST   /transactions/withdraw -> Saque
-
-    POST   /transactions/transfer -> Transferência entre usuários
+    POST   /transactions/transfer -> Transferência
 
     GET   /user/balance -> Saldo em reais
 ```
