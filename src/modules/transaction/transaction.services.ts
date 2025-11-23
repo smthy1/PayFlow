@@ -30,11 +30,10 @@ async function deposit (userInputData: DepositInput, userId: string) {
             });
             
             const newUserBalanceToCache = updateUserBalance.balance;
-            const newUserBalanceConverted = convertCentsToBRL(updateUserBalance.balance);
 
             const transactionDetails = {
                 type: createTransaction.type,
-                amount:`R$ ${newUserBalanceConverted}`,
+                amount:`R$ ${amount.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
                 id: createTransaction.id,
                 createdAt: createTransaction.createdAt,
                 fromUserId: createTransaction.fromUserId,
@@ -42,7 +41,7 @@ async function deposit (userInputData: DepositInput, userId: string) {
             };
             
             return { 
-                message: "Depósito realizado", transactionDetails: transactionDetails, newBalance: newUserBalanceConverted, balanceToCache: newUserBalanceToCache 
+                message: "Depósito realizado", transactionDetails: transactionDetails, balanceToCache: newUserBalanceToCache 
             }
         });
 
@@ -50,7 +49,7 @@ async function deposit (userInputData: DepositInput, userId: string) {
 
         setCacheUserBalance({ userId: userId, balance: deposit.balanceToCache! });
 
-        return { message: deposit.message, transactionDetails: deposit.transactionDetails, newUserBalance: `R$ ${deposit.newBalance}` };
+        return { message: deposit.message, transactionDetails: deposit.transactionDetails };
     } catch (err) {
         return { unexpectedError: err };
     } 
@@ -86,11 +85,10 @@ async function withdraw(withdrawalData: WithdrawalData) {
             });
             
             const newUserBalanceToCache = updateUserBalance.balance;
-            const newUserBalanceConverted = convertCentsToBRL(updateUserBalance.balance);
             
             const transactionDetails = {
                 type: createTransaction.type,
-                amount:`R$ ${newUserBalanceConverted}`,
+                amount:`R$ ${withdrawalAmount.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
                 id: createTransaction.id,
                 createdAt: createTransaction.createdAt,
                 fromUserId: createTransaction.fromUserId,
@@ -98,14 +96,14 @@ async function withdraw(withdrawalData: WithdrawalData) {
             };
 
             return { 
-                message: "Saque realizado",  transactionDetails: transactionDetails, newBalance: newUserBalanceConverted, balanceToCache: newUserBalanceToCache 
+                message: "Saque realizado",  transactionDetails: transactionDetails, balanceToCache: newUserBalanceToCache 
             };
         });
 
         if (transaction.error) return transaction;
 
         setCacheUserBalance({ userId: id, balance: transaction.balanceToCache! });
-        return { message: transaction.message, transactionDetails: transaction.transactionDetails, newUserBalance: `R$ ${transaction.newBalance}` };
+        return { message: transaction.message, transactionDetails: transaction.transactionDetails };
     } catch (err) {
         return { unexpectedError: err };
     }

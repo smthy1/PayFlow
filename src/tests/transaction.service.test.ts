@@ -41,7 +41,7 @@ describe("Sistema de pagamentos", () => {
         const depositResult = await deposit({ amount: 15.00 }, user1.id) as DepositResponse;
 
         expect(depositResult.message).toBe("Depósito realizado");
-        expect(depositResult.newUserBalance).toBe("R$ 15,00");
+        expect(depositResult.transactionDetails.amount).toBe("R$ 15,00");
     });
 
     test("Não permite sacar mais que o saldo atual", async () => {
