@@ -35,7 +35,7 @@ const transactionRoutes = async (app: FastifyTypedInstance) => {
     {
       preHandler: [authToken, validateSchema(withdrawalDataToControllerSchema)],
       schema: {
-        description: 'Withdraw',
+        description: 'Sacar dinheiro',
         tags: ['transactions'],
         body: withdrawalDataToControllerSchema,
         response: { 200: withdrawalResponseSchema }
