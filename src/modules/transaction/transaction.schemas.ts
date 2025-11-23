@@ -21,8 +21,7 @@ export const depositResponseSchema = z.object({
         createdAt: z.date(),
         fromUserId: z.string().nullable(),
         toUserId: z.string().nullable(),
-    }),
-  newUserBalance: z.string()
+    })
 });
 
 
@@ -35,8 +34,7 @@ export const withdrawalResponseSchema = z.object({
         createdAt: z.date(),
         fromUserId: z.string().nullable(),
         toUserId: z.string().nullable(),
-    }),
-  newUserBalance: z.string()
+    })
 });
 
 export const withdrawalDataSchema = z.object({
