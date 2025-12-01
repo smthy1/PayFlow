@@ -78,7 +78,7 @@ async function fogortPassword(userEmail: ForgotPasswordUserInput) {
         }, resetPasswordSecret, { expiresIn: '30m'});
 
         const url = process.env.RENDER_URL as string;
-        await sendEmailToResetPassword({ email: email, resetLink: `${url}auth/reset-password/${token}` });
+        await sendEmailToResetPassword({ email: email, resetLink: `${url}auth/reset-password?token=${token}` });
     } catch (err) {
         return { unexpectedError: err };
     }
@@ -98,10 +98,11 @@ async function resetPassword(userInput: ResetPasswordUserInput, queryParamToken:
         const findUser = await prisma.user.findUnique({ where: { id: decodedUserId.id } });
 
         if (!findUser) return { error: "Id inválido" };
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
 
         await prisma.user.update({ 
             where: { id: findUser.id },
-            data: { password: newPassword }
+            data: { password: hashedPassword }
         });
 
         return { message: "Senha atualizada" };
